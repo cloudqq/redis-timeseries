@@ -1,8 +1,7 @@
-[![CircleCI](https://circleci.com/gh/RedisLabsModules/RedisTimeSeries/tree/master.svg?style=svg)](https://circleci.com/gh/RedisLabsModules/RedisTimeSeries/tree/master)
-[![GitHub issues](https://img.shields.io/github/release/RedisLabsModules/redis-timeseries.svg)](https://github.com/RedisLabsModules/redis-timeseries/releases/latest)
+<img src="images/logo.png" alt="logo" width="100"/>
 
-# Redis Time-Series Module
-Time series data structure for redis.
+# RedisTimeSeries Module
+Time series data structure for Redis.
 
 ## Using with other tools metrics tools
 See [Tools](tools/) directory.
@@ -18,11 +17,10 @@ Each sample is the size of 128bit (64bit for the timestamp and 64bit for the val
 ## Features
 * Quick inserts (50K samples per sec)
 * Query by start time and end-time
-* Query by labels sets
 * Aggregated queries (Min, Max, Avg, Sum, Range, Count, First, Last) for any time bucket
 * Configurable max retention period
 * Compactions/Roll-ups - automatically updated aggregated timeseries
-* labels index - each key has labels which will allows query by labels
+
 
 ## Docker
 
@@ -45,22 +43,19 @@ In your redis-server run: `loadmodule redistimeseries.so`.
 
 More infomation about modules can be found at redis offical documentation: https://redis.io/topics/modules-intro
 
-## Tests
+### Tests
 Tests are written in python using the [rmtest](https://github.com/RedisLabs/rmtest) library.
 ```
 $ cd src
 $ pip install -r tests/requirements.txt # optional, use virtualenv
-$ make tests
+$ make test
 ```
 
-## Documentation
+### Client libraries
 
-Read the docs at https://oss.redislabs.com/redistimeseries/
+Some languages have client libraries that provide support for RedisTimeSeries's commands:
 
-## Mailing List / Forum
-
-Got questions? Feel free to ask at the [RedisTimeSeries mailing list](https://groups.google.com/forum/#!forum/redistimeseries).
-
-## License
-
-Redis Source Available License Agreement, see [LICENSE](LICENSE)
+| Project | Language | License | Author | URL |
+| ------- | -------- | ------- | ------ | --- |
+| JRedisTimeSeries | Java | BSD-3 | [RedisLabs](https://redislabs.com/) | [Github](https://github.com/RedisTimeSeries/JRedisTimeSeries/) |
+| redistimeseries-go | Go | Apache-2 | [RedisLabs](https://redislabs.com/) | [Github](https://github.com/RedisTimeSeries/redistimeseries-go) |

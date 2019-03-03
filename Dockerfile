@@ -1,18 +1,36 @@
+FROM redis:latest as builder
 
-FROM ubuntu
+ENV DEPS "build-essential"
 
-RUN apt-get -y update && apt-get install -y build-essential
-RUN apt-get install -y wget
-RUN cd /tmp
-RUN wget https://github.com/antirez/redis/archive/5.0.3.tar.gz
-#RUN wget https://github.com/antirez/redis/archive/5.0.3.tar.gz
-RUN tar xvzf 5.0.3.tar.gz
-RUN cd redis-5.0.3 && make
-RUN cd redis-5.0.3 && make install
-COPY . /redis-tsdb
-RUN cd redis-tsdb/RedisModulesSDK/rmutil && make clean && make
-RUN cd redis-tsdb/src && make clean && make
+# Set up a build environment
+RUN set -ex;\
+    deps="$DEPS";\
+    apt-get update;\
+    apt-get install -y --no-install-recommends $deps;
+    
+# Build the source
+ADD ./ /redis-timeseries
+
+# Build Redis-TimeSeries
+WORKDIR /redis-timeseries
+RUN set -ex;\
+	cd RedisModulesSDK/rmutil;\
+	make clean;\
+	make;\
+	cd -;
+RUN set -ex;\
+	cd src;\
+    make clean; \
+    make;
+
+# Package the runner
+FROM redis:latest
+ENV LIBDIR /usr/lib/redis/modules
+WORKDIR /data
+RUN set -ex;\
+    mkdir -p "$LIBDIR";
+
+COPY --from=builder /redis-timeseries/src/redistimeseries.so "$LIBDIR"
 
 EXPOSE 6379
-
-CMD ["/usr/local/bin/redis-server", "--bind", "0.0.0.0","--loadmodule", "/redis-tsdb/src/redis-tsdb-module.so"]
+CMD ["redis-server", "--loadmodule", "/usr/lib/redis/modules/redistimeseries.so"]

@@ -1,3 +1,8 @@
+/*
+* Copyright 2018-2019 Redis Labs Ltd. and Contributors
+*
+* This file is available under the Redis Labs Source Available License Agreement
+*/
 #include "redismodule.h"
 #include "rmutil/util.h"
 #include "rmutil/strings.h"
@@ -22,7 +27,7 @@ int ReadConfig(RedisModuleString **argv, int argc) {
             return TSDB_ERROR;
         }
 
-        printf("loaded default compation policy: %s\n\r", policy_cstr);
+        printf("loaded default compaction policy: %s\n\r", policy_cstr);
         TSGlobalConfig.hasGlobalConfig = TRUE;
     }
 
@@ -33,16 +38,17 @@ int ReadConfig(RedisModuleString **argv, int argc) {
 
         printf("loaded default retention policy: %lld \n", TSGlobalConfig.retentionPolicy);
         TSGlobalConfig.hasGlobalConfig = TRUE;
+    } else {
+        TSGlobalConfig.retentionPolicy = RETENTION_DEFAULT_SECS;
     }
 
     if (argc > 1 && RMUtil_ArgIndex("MAX_SAMPLE_PER_CHUNK", argv, argc) >= 0) {
         if (RMUtil_ParseArgsAfter("MAX_SAMPLE_PER_CHUNK", argv, argc, "l", &TSGlobalConfig.maxSamplesPerChunk) != REDISMODULE_OK) {
             return TSDB_ERROR;
         }
-
-        printf("loaded default MAX_SAMPLE_PER_CHUNK policy: %lld \n", TSGlobalConfig.maxSamplesPerChunk);
     } else {
         TSGlobalConfig.maxSamplesPerChunk = SAMPLES_PER_CHUNK_DEFAULT_SECS;
     }
+    printf("loaded default MAX_SAMPLE_PER_CHUNK policy: %lld \n", TSGlobalConfig.maxSamplesPerChunk);
     return TSDB_OK;
 }

@@ -1,13 +1,14 @@
-language: C
-dist: trusty
-compiler:
-    - clang
-    - gcc
+language: ruby
+branches:
+  only:
+    - master
+services:
+  - docker
+
 before_install:
-      - sudo pip2 install pytest pytest-cov rmtest==0.2 redis
-      - sudo apt-get install --allow-unauthenticated -qq clang
-      - git clone -b 4.0 --depth 1 https://github.com/antirez/redis.git
-      - cd redis
-      - sudo make -j install
-      - cd ..
-script: "cd src && make -j all tests unittests"
+  - docker login -u="$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+
+script:
+  - docker build --no-cache -t cloudqq/redis-ts .
+  - docker tag cloudqq/redis-ts:latest cloudqq/redis-ts:v1
+  - docker push cloudqq/redis-ts:latest
